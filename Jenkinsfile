@@ -4,15 +4,10 @@ pipeline {
 	nodejs '14.21.2'
     }
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'master', url: 'https://github.com/cloudperis/weather-report.git'
-            }
-        }
         stage('Build') {
             steps {
-                echo 'npm install'
-                echo 'npm run build'
+                echo 'npm install -g @angular/cli'
+                echo 'ng build'
             }
         }
         stage('Deploy') {
@@ -23,7 +18,7 @@ pipeline {
             }
             steps {
                 withAWS(region: 'us-east-1', credentials: 'aws-credentials') {
-                    s3Upload(pathStyleAccessEnabled: true, bucket: S3_BUCKET_NAME, workingDir: './', includePathPattern: '**/*', excludePathPattern: '')
+                    s3Upload(pathStyleAccessEnabled: true, bucket: S3_BUCKET_NAME, workingDir: './dist/angular-app', includePathPattern: '**/*', excludePathPattern: '')
                 }
             }
         }
